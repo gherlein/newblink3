@@ -1,5 +1,6 @@
 *~
 build
+credentials.h
 
 # Compiled Object files
 **/.DS_Store

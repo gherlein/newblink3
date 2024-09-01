@@ -6,6 +6,7 @@ include(pico_sdk_import.cmake)
 project(main C CXX ASM)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 17)
+set(PICO_BOARD pico_w)
 
 pico_sdk_init()
 
@@ -24,10 +25,16 @@ pico_add_extra_outputs(main)
 
 target_link_libraries(main
 	pico_stdlib
-	# other libs as needed
+    pico_cyw43_arch_lwip_threadsafe_background 
+    # other libs as needed
 )
 
 add_custom_target(flash
-    COMMAND /bin/bash ../flash
+    COMMAND /bin/bash ../flash main.elf
     DEPENDS main
 )
+add_custom_target(reset
+    COMMAND /bin/bash ../reset
+    DEPENDS main
+)
+

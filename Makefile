@@ -10,7 +10,10 @@ build:
 	cd build;cmake ..;make -j8
 
 prep:
+	cp ${PICO_SDK_PATH}/external/pico_sdk_import.cmake .
 	mkdir build;cd build;rm -rf *;cmake ..
+	cat ${PICO_SDK_PATH}/pico_sdk_version.cmake | grep "set(" | grep -v "{" | grep -v "ID"
+
 
 flash: build ${ELF}
 	@echo "Flashing the project"
@@ -19,8 +22,12 @@ flash: build ${ELF}
 
 clean:
 	-@rm -rf build
-	-@mkdir build
 	-@rm *~ || true
 
 allow:
 	# alternate:  source envrc	
+
+git:
+	-@git add *
+	-@git commit -am"updated"
+	-@git push origin main
