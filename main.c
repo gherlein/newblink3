@@ -7,7 +7,14 @@
  */
 
 #include "pico/stdlib.h"
+#include <stdint.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <string.h>
+#include "pico/stdlib.h"
+#include "pico/binary_info.h"
 #include "pico/cyw43_arch.h"
+
 #include "credentials.h"
 
 int setup(uint32_t country, const char *ssid, const char *pass, uint32_t auth)
@@ -21,13 +28,28 @@ int setup(uint32_t country, const char *ssid, const char *pass, uint32_t auth)
     {
         return 2;
     }
+    printf("IP: %s\n",
+           ip4addr_ntoa(netif_ip_addr4(netif_default)));
+    printf("Mask: %s\n",
+           ip4addr_ntoa(netif_ip_netmask4(netif_default)));
+    printf("Gateway: %s\n",
+           ip4addr_ntoa(netif_ip_gw4(netif_default)));
+    printf("Host Name: %s\n",
+           netif_get_hostname(netif_default));
 }
 
-uint32_t auth = CYW43_AUTH_WPA2_MIXED_PSK;
 int main()
 {
+    uint32_t auth = CYW43_AUTH_WPA2_MIXED_PSK;
+    // workaround for a hardware debug problem
+    // https://forums.raspberrypi.com/viewtopic.php?t=363914
+    // also in openocd you need to us -c "set USE_CORE 0"  before rp2040.cfg is loaded per https://github.com/raspberrypi/debugprobe/issues/45
+    timer_hw->dbgpause = 0;
+    sleep_ms(150);
+
     stdio_init_all();
     setup(country, ssid, pass, auth);
+
     while (true)
     {
         printf("on\n");
